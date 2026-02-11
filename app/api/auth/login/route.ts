@@ -7,13 +7,13 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { email, password } = body || {};
 
-    if (!email || !password) return NextResponse.json({ error: 'email and password required' }, { status: 400 });
+    if (!email || !password) return NextResponse.json({ error: 'Email dan password diperlukan' }, { status: 400 });
 
     const user = await (prisma as any).user.findUnique({ where: { email } });
-    if (!user) return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+    if (!user) return NextResponse.json({ error: 'Email tidak terdaftar' }, { status: 401 });
 
     const ok = await bcrypt.compare(password, user.passwordHash);
-    if (!ok) return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+    if (!ok) return NextResponse.json({ error: 'password salah' }, { status: 401 });
 
     const res = NextResponse.json({ ok: true, user: { id: user.id, email: user.email, role: user.role } });
     const isProd = process.env.NODE_ENV === 'production';

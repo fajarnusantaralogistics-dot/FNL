@@ -11,9 +11,9 @@ function parseTokenFromHeader(req: Request) {
 export async function PUT(req: Request) {
   try {
     const token = parseTokenFromHeader(req);
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!token) return NextResponse.json({ error: 'Tidak terotorisasi' }, { status: 401 });
     const id = Number(token);
-    if (Number.isNaN(id)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (Number.isNaN(id)) return NextResponse.json({ error: 'Tidak terotorisasi' }, { status: 401 });
 
     const body = await req.json();
     const { email, password } = body || {};
@@ -24,7 +24,7 @@ export async function PUT(req: Request) {
       data.passwordHash = hash;
     }
 
-    if (Object.keys(data).length === 0) return NextResponse.json({ error: 'No changes provided' }, { status: 400 });
+    if (Object.keys(data).length === 0) return NextResponse.json({ error: 'Tidak ada perubahan yang diberikan' }, { status: 400 });
 
     try {
       const user = await (prisma as any).user.update({ where: { id }, data });
@@ -32,7 +32,7 @@ export async function PUT(req: Request) {
     } catch (err: any) {
       // unique constraint on email
       const message = String(err?.message || err);
-      if (message.includes('Unique') || message.includes('unique')) return NextResponse.json({ error: 'Email already in use' }, { status: 400 });
+      if (message.includes('Unique') || message.includes('unique')) return NextResponse.json({ error: 'Email sudah digunakan' }, { status: 400 });
       return NextResponse.json({ error: message }, { status: 500 });
     }
   } catch (err: any) {
