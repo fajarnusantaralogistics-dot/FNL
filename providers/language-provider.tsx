@@ -1,6 +1,6 @@
 "use client";
 
-import { join } from "path";
+
 import React, { useEffect, useState } from "react";
 
 type Lang = "id" | "en";

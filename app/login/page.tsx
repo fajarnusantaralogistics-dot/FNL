@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -9,8 +9,13 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const params = useSearchParams();
-  const from = params?.get('from') || '/admin';
+  const [from, setFrom] = useState('/admin');
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const f = new URLSearchParams(window.location.search).get('from');
+    if (f) setFrom(f);
+  }, []);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();

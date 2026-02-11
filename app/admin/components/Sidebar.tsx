@@ -1,16 +1,32 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function Sidebar() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const section = (searchParams?.get('section') as 'overview' | 'clients' | 'gallery' | 'testimonials' | 'profile') || 'overview';
+  const [section, setSection] = useState<'overview' | 'clients' | 'gallery' | 'testimonials' | 'profile'>('overview');
+
+  // read search params from window on client to avoid useSearchParams SSR requirement
+  useEffect(() => {
+    function read() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const s = (params.get('section') as any) || 'overview';
+        setSection(s);
+      } catch (e) {
+        setSection('overview');
+      }
+    }
+    read();
+    window.addEventListener('popstate', read);
+    return () => window.removeEventListener('popstate', read);
+  }, []);
 
   const navigate = (s: string) => {
-    const params = new URLSearchParams(Array.from(searchParams.entries()));
-    params.set('section', s);
-    router.push(`/admin?${params.toString()}`);
+    // simple navigation, set section query param
+    router.push(`/admin?section=${encodeURIComponent(s)}`);
+    setSection(s as any);
   };
 
   return (

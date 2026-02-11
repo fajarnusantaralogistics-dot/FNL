@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
 import OverviewPanel from './components/OverviewPanel';
 import ClientsPanel from './components/ClientsPanel';
 import GalleryPanel from './components/GalleryPanel';
@@ -15,8 +14,28 @@ export default function AdminPage() {
   const [fileInput, setFileInput] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [category, setCategory] = useState<string>('all');
-  const searchParams = useSearchParams();
-  const section = (searchParams?.get('section') as 'overview' | 'clients' | 'gallery' | 'testimonials' | 'profile') || 'overview';
+  const [section, setSection] = useState<'overview' | 'clients' | 'gallery' | 'testimonials' | 'profile'>('overview');
+
+  // read `?section=` from the client-side URL to avoid using next/navigation during prerender
+  useEffect(() => {
+    function readSection() {
+      if (typeof window === 'undefined') return;
+      const sp = new URLSearchParams(window.location.search).get('section') as
+        | 'overview'
+        | 'clients'
+        | 'gallery'
+        | 'testimonials'
+        | 'profile'
+        | null;
+      if (sp) setSection(sp);
+      else setSection('overview');
+    }
+
+    readSection();
+    const onPop = () => readSection();
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
 
   // clients state
   const [clients, setClients] = useState<{ id: number; name: string; website?: string; logoUrl: string; logoPublic: string; category?: string }[]>([]);
