@@ -27,6 +27,13 @@ export default function Sidebar() {
     // simple navigation, set section query param
     router.push(`/admin?section=${encodeURIComponent(s)}`);
     setSection(s as any);
+    try {
+      // inform other listeners (in case pushState doesn't trigger popstate)
+      // dispatch asynchronously to avoid triggering updates inside insertion effects
+      queueMicrotask(() => window.dispatchEvent(new Event('locationchange')));
+    } catch (e) {
+      setTimeout(() => window.dispatchEvent(new Event('locationchange')));
+    }
   };
 
   return (

@@ -16,7 +16,6 @@ export default function AdminPage() {
   const [category, setCategory] = useState<string>('all');
   const [section, setSection] = useState<'overview' | 'clients' | 'gallery' | 'testimonials' | 'profile'>('overview');
 
-  // read `?section=` from the client-side URL to avoid using next/navigation during prerender
   useEffect(() => {
     function readSection() {
       if (typeof window === 'undefined') return;
@@ -30,11 +29,39 @@ export default function AdminPage() {
       if (sp) setSection(sp);
       else setSection('overview');
     }
+    (function patchHistoryOnce() {
+      if (typeof window === 'undefined' || (window as any).__patchedHistory) return;
+      const _push = history.pushState;
+      history.pushState = function (this: any, ...args: any[]) {
+        const res = _push.apply(this, args as any);
+        try {
+          queueMicrotask(() => window.dispatchEvent(new Event('locationchange')));
+        } catch (e) {
+          setTimeout(() => window.dispatchEvent(new Event('locationchange')));
+        }
+        return res;
+      } as any;
+      const _replace = history.replaceState;
+      history.replaceState = function (this: any, ...args: any[]) {
+        const res = _replace.apply(this, args as any);
+        try {
+          queueMicrotask(() => window.dispatchEvent(new Event('locationchange')));
+        } catch (e) {
+          setTimeout(() => window.dispatchEvent(new Event('locationchange')));
+        }
+        return res;
+      } as any;
+      (window as any).__patchedHistory = true;
+    })();
 
     readSection();
-    const onPop = () => readSection();
-    window.addEventListener('popstate', onPop);
-    return () => window.removeEventListener('popstate', onPop);
+    const onLocationChange = () => readSection();
+    window.addEventListener('popstate', onLocationChange);
+    window.addEventListener('locationchange', onLocationChange);
+    return () => {
+      window.removeEventListener('popstate', onLocationChange);
+      window.removeEventListener('locationchange', onLocationChange);
+    };
   }, []);
 
   // clients state
@@ -43,7 +70,6 @@ export default function AdminPage() {
   const [clientWebsite, setClientWebsite] = useState('');
   const [clientFile, setClientFile] = useState<File | null>(null);
   const [clientCategory, setClientCategory] = useState<'all' | 'corporate' | 'otomotif' | 'property'>('all');
-  // separate category used by the add-client form (so filter != form input)
   const [clientFormCategory, setClientFormCategory] = useState<'corporate' | 'otomotif' | 'property'>('corporate');
   const [alert, setAlert] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -143,7 +169,6 @@ export default function AdminPage() {
     form.append('file', clientFile);
     form.append('name', clientName);
     if (clientWebsite) form.append('website', clientWebsite);
-    // always send the category selected in the add-client form
     form.append('category', clientFormCategory);
     try {
       const res = await fetch('/api/clients', { method: 'POST', body: form });
@@ -210,7 +235,6 @@ export default function AdminPage() {
     await load();
   }
 
-  // panels moved to separate components
 
   return (
     <div className="p-8 max-w-4xl mx-auto">
