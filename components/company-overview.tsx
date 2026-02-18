@@ -5,7 +5,6 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useLanguage } from "@/providers/language-provider";
 import UniformImg from "../assets/uniform.jpeg";
-import TeamImg from "../assets/kapal/5.jpeg";
 
 type HotspotProps = {
   id: string;
