@@ -1,4 +1,6 @@
-'use client';
+"use client";
+import { useState } from "react";
+import ConfirmModal from "./ConfirmModal";
 
 export default function ClientsPanel(props: {
   clients: any[];
@@ -20,7 +22,7 @@ export default function ClientsPanel(props: {
     clients,
     clientCategory,
     setClientCategory,
-    clientFormCategory = 'corporate',
+    clientFormCategory = "corporate",
     setClientFormCategory = (() => {}) as any,
     onFileChange,
     clientFile,
@@ -32,19 +34,21 @@ export default function ClientsPanel(props: {
     loading,
     removeClient,
   } = props;
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Tambah Client */}
-      <div className="bg-white p-6 rounded-xl shadow">
-        <h3 className="text-lg font-semibold mb-5">Tambah Client</h3>
+      <div className="border border-slate-200 rounded-2xl p-6">
+        <h3 className="text-lg font-semibold mb-6">Tambah Client</h3>
 
         <form
           onSubmit={uploadClient}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end"
+          className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 items-end"
         >
+          {/* Logo */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-600">Logo</label>
+            <label className="text-sm text-slate-600">Logo</label>
             <input
               type="file"
               accept="image/*"
@@ -53,32 +57,35 @@ export default function ClientsPanel(props: {
             />
           </div>
 
+          {/* Nama */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-600">Nama Client</label>
+            <label className="text-sm text-slate-600">Nama Client</label>
             <input
               value={clientName}
               onChange={(e) => setClientName(e.target.value)}
               placeholder="Nama client"
-              className="border px-3 py-2 rounded-lg text-sm"
+              className="border border-slate-300 px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black"
             />
           </div>
 
+          {/* Website */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-600">Website</label>
+            <label className="text-sm text-slate-600">Website</label>
             <input
               value={clientWebsite}
               onChange={(e) => setClientWebsite(e.target.value)}
               placeholder="https://example.com"
-              className="border px-3 py-2 rounded-lg text-sm"
+              className="border border-slate-300 px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black"
             />
           </div>
 
+          {/* Kategori */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-600">Kategori</label>
+            <label className="text-sm text-slate-600">Kategori</label>
             <select
               value={clientFormCategory}
               onChange={(e) => setClientFormCategory?.(e.target.value)}
-              className="border px-3 py-2 rounded-lg text-sm"
+              className="border border-slate-300 px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black"
             >
               <option value="corporate">Corporate</option>
               <option value="otomotif">Otomotif</option>
@@ -86,27 +93,28 @@ export default function ClientsPanel(props: {
             </select>
           </div>
 
+          {/* Button */}
           <button
             type="submit"
             disabled={!clientFile || loading}
-            className="h-[42px] bg-sky-600 text-white rounded-lg text-sm font-medium hover:bg-sky-700 disabled:opacity-50"
+            className="h-[42px] bg-black text-white rounded-lg text-sm font-medium hover:opacity-90 transition disabled:opacity-50"
           >
-            {loading ? 'Mengunggah...' : 'Tambah Client'}
+            {loading ? "Mengunggah..." : "Tambah"}
           </button>
         </form>
       </div>
 
       {/* Daftar Client */}
-      <div className="bg-white p-6 rounded-xl shadow">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+      <div className="border border-slate-200 rounded-2xl p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <h3 className="text-lg font-semibold">Clients</h3>
 
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600">Filter:</span>
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-slate-600">Filter</span>
             <select
               value={clientCategory}
               onChange={(e) => setClientCategory(e.target.value)}
-              className="border px-3 py-2 rounded-lg text-sm"
+              className="border border-slate-300 px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black"
             >
               <option value="all">Semua</option>
               <option value="corporate">Corporate</option>
@@ -116,35 +124,37 @@ export default function ClientsPanel(props: {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4">
+        <div className="divide-y divide-slate-200">
           {clients.map((c) => (
             <div
               key={c.id}
-              className="border rounded-lg p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+              className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 py-4"
             >
               <div className="flex items-center gap-4">
-                <img
-                  src={c.logoUrl}
-                  alt={c.name}
-                  className="w-28 h-14 object-contain bg-gray-50 rounded"
-                />
+                <div className="w-32 h-16 flex items-center justify-center bg-slate-50 border border-slate-200 rounded-lg">
+                  <img
+                    src={c.logoUrl}
+                    alt={c.name}
+                    className="max-h-12 object-contain"
+                  />
+                </div>
 
                 <div className="space-y-1">
-                  <div className="font-medium">{c.name}</div>
+                  <div className="font-medium text-slate-800">{c.name}</div>
 
                   {c.website && (
                     <a
                       href={c.website}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-sm text-sky-600 hover:underline"
+                      className="text-sm text-slate-600 hover:text-black transition"
                     >
                       {c.website}
                     </a>
                   )}
 
                   {c.category && (
-                    <div className="text-xs text-gray-500 capitalize">
+                    <div className="text-xs text-slate-500 capitalize">
                       {c.category}
                     </div>
                   )}
@@ -152,8 +162,8 @@ export default function ClientsPanel(props: {
               </div>
 
               <button
-                onClick={() => removeClient(c.logoPublic)}
-                className="text-sm text-red-600 hover:underline self-start sm:self-center"
+                onClick={() => setDeleteTarget(c.logoPublic)}
+                className="text-sm text-red-600 hover:underline"
               >
                 Hapus
               </button>
@@ -161,6 +171,16 @@ export default function ClientsPanel(props: {
           ))}
         </div>
       </div>
+
+      <ConfirmModal
+        open={!!deleteTarget}
+        title="Yakin ingin menghapus client ini?"
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={() => {
+          if (deleteTarget) removeClient(deleteTarget);
+          setDeleteTarget(null);
+        }}
+      />
     </div>
   );
 }
