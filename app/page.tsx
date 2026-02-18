@@ -1,13 +1,14 @@
-import Navbar from '@/components/navbar';
-import Hero from '@/components/hero';
-import CompanyOverview from '@/components/company-overview';
-import WhyChooseUs from '@/components/why-choose-us';
-import Services from '@/components/services';
-import Gallery from '@/components/gallery';
-import Clients from '@/components/clients';
-import Testimonials from '@/components/testimonials';
-import Footer from '@/components/footer';
-import ScrollToTop from '@/components/scroll-to-top';
+import Navbar from "@/components/navbar";
+import Hero from "@/components/hero";
+import CompanyOverview from "@/components/company-overview";
+import WhyChooseUs from "@/components/why-choose-us";
+import Services from "@/components/services";
+import Gallery from "@/components/gallery";
+import Clients from "@/components/clients";
+import Testimonials from "@/components/testimonials";
+import Footer from "@/components/footer";
+import ScrollToTop from "@/components/scroll-to-top";
+import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 
 export default function Home() {
   return (
@@ -22,6 +23,7 @@ export default function Home() {
       <Testimonials />
       <Footer />
       <ScrollToTop />
+      <FloatingWhatsApp />
     </div>
   );
 }
