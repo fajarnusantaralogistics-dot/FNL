@@ -9,6 +9,14 @@ import Testimonials from "@/components/testimonials";
 import Footer from "@/components/footer";
 import ScrollToTop from "@/components/scroll-to-top";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
+import { buildMetadata } from "@/components/seo";
+
+export const metadata = buildMetadata({
+  title: "Fajar Nusantara Logistik - Solusi Pengiriman Terpercaya",
+  description:
+    "Layanan logistik dan ekspedisi terpercaya untuk pengiriman barang, kendaraan, dan alat berat ke seluruh Indonesia.",
+  pathname: "/",
+});
 
 export default function Home() {
   return (
