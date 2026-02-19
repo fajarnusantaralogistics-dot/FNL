@@ -43,6 +43,10 @@ export const metadata: Metadata = {
       "Layanan logistik dan ekspedisi terpercaya untuk pengiriman barang, kendaraan, dan alat berat ke seluruh Indonesia.",
     images: ["/og-image.svg"],
   },
+  icons: {
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    shortcut: ["/favicon.svg"],
+  },
   viewport: "width=device-width, initial-scale=1",
   robots: {
     index: true,
@@ -65,7 +69,7 @@ export default function RootLayout({
     "@type": "Organization",
     name: "Fajar Nusantara Logistik",
     url: SITE_URL,
-    logo: `${SITE_URL}/og-image.svg`,
+    logo: `${SITE_URL.replace(/\/$/, "")}/logo.svg`,
     description:
       "Layanan logistik dan ekspedisi terpercaya untuk pengiriman barang, kendaraan, dan alat berat ke seluruh Indonesia.",
     sameAs: [],
